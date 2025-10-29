@@ -193,6 +193,92 @@ Don't get me wrong—GitHub Actions is powerful and useful. Use it when:
 - You want to understand every step
 - Debugging automation is slowing you down
 
+## Issue #5: Template Conflicts and Browser Caching
+
+Even after getting the deployment pipeline working, some issues only surfaced when viewing the site in production. These weren't build failures—they were rendering and caching problems.
+
+### The Duplicate Tag Problem
+
+**The Symptom:**
+The homepage showed duplicate content, a heading reading "Home =====", and some browsers displayed different content than others.
+
+**The Root Cause:**
+Zola uses a template hierarchy where templates in your project's `templates/` directory override theme templates. I had a custom `templates/index.html` that included its own `<main>` tag, while the base template (`_base.html`) also provided one. This created nested `<main>` tags, causing rendering issues.
+
+Additionally, the custom template was using `section.title` instead of `config.extra.radion_title`, which is why "Home" appeared instead of the intended site title.
+
+**The Fix:**
+1. **Removed duplicate tags:** Templates that extend `_base.html` shouldn't include their own `<main>` tag—the base template provides it.
+2. **Fixed title source:** Changed from `section.title` to `config.extra.radion_title` for the homepage.
+
+```html
+<!-- Before (wrong) -->
+{% block main %}
+<main>
+  <header><h1>{{ section.title }}</h1></header>
+  ...
+</main>
+{% endblock main %}
+
+<!-- After (correct) -->
+{% block main %}
+  <header><h1>{{ config.extra.radion_title }}</h1></header>
+  ...
+{% endblock main %}
+```
+
+### The Browser Caching Problem
+
+**The Symptom:**
+After deploying fixes, some browsers still showed old content:
+- Favicon didn't update
+- Theme toggle didn't work
+- JavaScript files weren't loading
+
+**The Root Cause:**
+Browsers and CDNs aggressively cache static assets. Even after deploying new files, browsers might serve cached versions. This is especially problematic for:
+- Favicons (often cached for days or weeks)
+- JavaScript files (cached for performance)
+- CSS files
+
+**The Solution:**
+Add cache-busting query parameters to asset URLs. Zola templates can use `now()` to generate timestamps:
+
+```html
+<!-- Cache-busting favicon -->
+<link rel="icon" type="image/svg+xml" 
+      href="{{ config.base_url }}/icons/favicon/favicon.svg?v={{ now() | date(format='%s') }}" />
+
+<!-- Cache-busting JavaScript -->
+<script defer src="{{ get_url(path='js/toggle-theme.js') | safe }}?v={{ now() | date(format='%s') }}"></script>
+```
+
+**Why This Works:**
+- Each deployment generates a new timestamp
+- Browsers see different URLs (`file.js?v=1234567890` vs `file.js?v=1234567891`)
+- They treat them as different files and fetch fresh versions
+- Old cached versions become irrelevant
+
+**The Lesson:**
+Cache-busting isn't just for "production" sites—it's essential for any deployment where you want updates to be visible immediately. GitHub Pages is a CDN-backed service, so caching is aggressive by design.
+
+### Testing Across Browsers
+
+**The Problem:**
+Different browsers cache differently. Chrome might show updated content while Firefox shows old content, or vice versa.
+
+**The Solution:**
+1. Always test in multiple browsers after deployment
+2. Use cache-busting query parameters proactively
+3. Use hard refresh (Cmd+Shift+R / Ctrl+Shift+R) when testing
+4. Consider adding cache headers in your deployment if possible
+
+**What I Learned:**
+- Template inheritance can create subtle bugs that only appear in production
+- Browser caching is more aggressive than you might expect
+- Cache-busting should be part of your deployment strategy from the start
+- Testing locally doesn't always catch production rendering issues
+
 ---
 
 ## Lessons Learned
@@ -205,7 +291,13 @@ Don't get me wrong—GitHub Actions is powerful and useful. Use it when:
 
 4. **Inspect the output:** When something doesn't work, look at the actual generated files. HTML errors, missing assets, and broken links are often visible in the source.
 
-5. **Document your process:** Whether you use automation or manual deployment, document it. Future you (and your team) will thank you.
+5. **Understand template inheritance:** When using SSGs like Zola, know how template overriding works. Custom templates in your `templates/` directory override theme templates, and you need to understand what the base template provides to avoid duplicating elements.
+
+6. **Plan for caching:** Browser and CDN caching can mask deployment issues. Use cache-busting query parameters from the start, especially for assets that change frequently (favicons, JavaScript, CSS).
+
+7. **Test across browsers:** Different browsers cache differently. Always test in multiple browsers after deployment, and use hard refresh when debugging.
+
+8. **Document your process:** Whether you use automation or manual deployment, document it. Future you (and your team) will thank you.
 
 ---
 
