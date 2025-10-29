@@ -84,4 +84,3 @@ jobs:
           force_orphan: true
           cname: noos.blog
 
-test
