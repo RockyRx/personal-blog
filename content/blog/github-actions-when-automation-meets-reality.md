@@ -1,0 +1,192 @@
++++
+title = "GitHub Actions: When Automation Meets Reality"
+date = 2025-10-29
+description = "Lessons learned from wrestling with GitHub Actions: submodules, deployment strategies, and when to embrace manual control."
+[taxonomies]
+categories = ["DevOps"]
+tags = ["github-actions", "ci-cd", "automation", "deployment", "lessons-learned"]
++++
+
+When you first set up GitHub Actions for a project, it feels like magic. Push your code, and the CI/CD pipeline takes care of everything—building, testing, deploying. But sometimes, the magic breaks. And when it does, you learn things you never expected to learn.
+
+I recently went through a journey with GitHub Actions that taught me a lot about the gap between "this should work" and "this actually works." Here's what I learned, without exposing too many project details.
+
+---
+
+## The Promise of Automation
+
+GitHub Actions promises a lot:
+- Automatic builds on every push
+- Consistent deployment environments
+- Less manual work, fewer human errors
+- Integration with GitHub Pages for static sites
+
+The setup looks straightforward:
+1. Create a `.github/workflows/deploy.yml` file
+2. Define your build steps
+3. Push and watch it work
+
+But reality has a way of complicating things.
+
+---
+
+## Issue #1: The Submodule Problem
+
+One of the first issues I encountered was related to git submodules. If your project includes external dependencies managed as submodules, GitHub Actions needs explicit configuration to handle them.
+
+**The Error:**
+```
+Error: fatal: No url found for submodule path 'themes/radion' in .gitmodules
+Error: The process '/usr/bin/git' failed with exit code 128
+```
+
+**The Root Cause:**
+GitHub Actions tries to fetch submodules by default, but if your `.gitmodules` file is missing or incomplete, or if the submodule path exists but isn't properly configured, the build fails.
+
+**The Solution:**
+If you're not actually using submodules (maybe you copied files directly), you have two options:
+
+1. **Remove the submodule completely:**
+   ```bash
+   git rm --cached themes/radion
+   rm -rf themes/radion/.git
+   git add themes/radion
+   git commit -m "Convert submodule to regular directory"
+   ```
+
+2. **Configure GitHub Actions to skip submodules:**
+   ```yaml
+   - uses: actions/checkout@v4
+     with:
+       submodules: false
+   ```
+
+I went with option 1 because I wasn't actually using submodules—I had copied the theme files directly into the repository. The submodule reference was leftover from an earlier setup.
+
+---
+
+## Issue #2: Branch Confusion
+
+GitHub Pages supports two deployment methods:
+- **GitHub Actions:** Build your site using a workflow
+- **Branch-based:** Serve files directly from a branch (like `gh-pages`)
+
+I started with GitHub Actions, but ran into issues. The build kept failing, and debugging CI/CD pipelines can be frustrating—you push, wait, check logs, repeat.
+
+**The Revelation:**
+Sometimes, manual deployment to a `gh-pages` branch is simpler and more reliable. You get:
+- Full control over when and how you deploy
+- Ability to test locally before deploying
+- No hidden automation surprises
+- Easier debugging (you can inspect the built files directly)
+
+**The Manual Approach:**
+```bash
+# Build locally
+zola build --output-dir public --force
+
+# Deploy to gh-pages branch
+git checkout -B gh-pages
+rsync -av --delete --exclude='.git/' public/ .
+git add -A
+git commit -m "Publish: $(date +%Y-%m-%d)"
+git push -f origin gh-pages
+git checkout main
+```
+
+Is this less "modern"? Maybe. But it's transparent, predictable, and gives you control when you need it.
+
+---
+
+## Issue #3: Missing Scripts and Assets
+
+When deploying to GitHub Pages, you need to ensure all your assets are included. This might seem obvious, but it's easy to miss.
+
+**The Problem:**
+Your site builds locally, but when deployed, certain features don't work—like a theme toggle button that does nothing, or search functionality that's broken.
+
+**The Cause:**
+JavaScript files weren't being included in the HTML. The build process generated the files, but the HTML templates weren't referencing them correctly, or the script tags were missing entirely.
+
+**The Fix:**
+Manually verify that all necessary scripts are loaded:
+- Check your HTML templates
+- Ensure script tags are in the correct order
+- Verify paths are correct (especially for GitHub Pages subdirectory paths)
+
+Sometimes, the simplest solution is to open the generated HTML and check what's actually there.
+
+---
+
+## Issue #4: The Abstraction Trap
+
+Here's the thing about automation: when it works, it's great. When it doesn't, you're debugging an abstraction layer you may not fully understand.
+
+**The Pattern:**
+1. Something breaks
+2. You check GitHub Actions logs
+3. You see an error message
+4. You make a change
+5. You push and wait
+6. Repeat
+
+This cycle can be slow, especially if your builds take a few minutes each time.
+
+**The Alternative:**
+With manual deployment:
+1. Build locally (instant feedback)
+2. Test locally
+3. Deploy when ready
+4. Inspect the deployed files directly
+
+The feedback loop is faster, and you understand every step.
+
+---
+
+## When to Use GitHub Actions
+
+Don't get me wrong—GitHub Actions is powerful and useful. Use it when:
+
+- You need automated testing on every commit
+- You want consistent build environments
+- Multiple people are deploying
+- You need to run expensive operations (like building large projects)
+- You want to enforce code quality checks
+
+**But consider manual deployment when:**
+- Your build process is simple
+- You want full control
+- You're deploying infrequently
+- You want to understand every step
+- Debugging automation is slowing you down
+
+---
+
+## Lessons Learned
+
+1. **Understand your dependencies:** Know whether you're using submodules, npm packages, or other external resources. This affects your CI/CD setup.
+
+2. **Test locally first:** Always build and test your site locally before relying on automation. Automation catches mistakes, but you should catch them first.
+
+3. **Keep it simple:** If automation adds complexity without clear benefits, consider if manual processes might be better for your use case.
+
+4. **Inspect the output:** When something doesn't work, look at the actual generated files. HTML errors, missing assets, and broken links are often visible in the source.
+
+5. **Document your process:** Whether you use automation or manual deployment, document it. Future you (and your team) will thank you.
+
+---
+
+## Conclusion
+
+GitHub Actions is a powerful tool, but it's not always the right tool. Sometimes, the manual approach gives you more control, better understanding, and faster iteration.
+
+The key is to choose the approach that fits your project, your team, and your workflow. Automation for the sake of automation isn't always better—sometimes, a simple script you understand is more valuable than a complex workflow you don't.
+
+At the end of the day, the goal is to deploy reliably and efficiently. Whether that's through GitHub Actions, manual commands, or a hybrid approach, what matters is that it works for you.
+
+---
+
+### Further Reading
+- [GitHub Actions Documentation](https://docs.github.com/en/actions) – Official documentation
+- [GitHub Pages Deployment](https://docs.github.com/en/pages) – Deployment strategies
+- [Managing Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) – Git submodule basics
