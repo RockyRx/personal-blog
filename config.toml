@@ -1,11 +1,23 @@
 # The URL the site will be built for
-base_url = "https://rockyrx.github.io/personal-blog"
+base_url = "https://noos.blog"
+
+# Site title
+title = "Noos - Where Thought, Code, and Craft Converge"
+
+# Site description for SEO
+description = "Personal blog about programming, technology, and engineering insights. Topics include Rust, DevOps, Linux, and software craftsmanship."
+
+# Site language
+default_language = "en"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
+
+# Generate sitemap for SEO
+generate_sitemap = true
 
 # The site theme to use.
 theme = "radion"
@@ -22,7 +34,7 @@ highlight_code = true
 
 [extra]
 author = "Oshadha G"
-radion_title = "Oshadha's Blog"
+radion_title = "Noos - Where Thought, Code, and Craft Converge"
 radion_menu = [
     {url = "$BASE_URL/", name = "Home"},
     {url = "$BASE_URL/categories", name = "Categories"},

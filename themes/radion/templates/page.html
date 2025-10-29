@@ -3,11 +3,57 @@
 
 {% block title %}
     {% if page.title %}
-    {{ page.title }}
+    {{ page.title }} | {{ config.title }}
     {% else %}
     {{ super() }}
     {% endif %}
 {% endblock title %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ page.title }}",
+  {% if page.description %}
+  "description": "{{ page.description }}",
+  {% elif page.summary %}
+  "description": "{{ page.summary | striptags | truncate(length=200) }}",
+  {% else %}
+  "description": "{{ config.description }}",
+  {% endif %}
+  {% if page.date %}
+  "datePublished": "{{ page.date | date(format='%+') }}",
+  {% endif %}
+  {% if page.updated %}
+  "dateModified": "{{ page.updated | date(format='%+') }}",
+  {% endif %}
+  "author": {
+    "@type": "Person",
+    "name": "{{ config.extra.author | default(value='Oshadha G') }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ config.title }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ config.base_url }}/icons/favicon/web-app-manifest-512x512.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ page.permalink }}"
+  },
+  "url": "{{ page.permalink }}",
+  {% if page.taxonomies.keywords %}
+  "keywords": "{{ page.taxonomies.keywords | join(sep=', ') }}",
+  {% elif page.taxonomies.tags %}
+  "keywords": "{{ page.taxonomies.tags | join(sep=', ') }}",
+  {% endif %}
+  "inLanguage": "{{ config.default_language | default(value='en') }}"
+}
+</script>
+{% endblock structured_data %}
 
 {% block header %}
     {{ super() }}
