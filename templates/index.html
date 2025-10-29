@@ -10,7 +10,7 @@
   {% if section and section.title %}
   <header><h1>{{ section.title }}</h1></header>
   {% endif %}
-  
+
   {% if section and section.content %}
   <div class="section-content">
     {{ section.content | safe }}
@@ -27,17 +27,16 @@
     <nav aria-label="Pagination">
       <p>
         {% if paginator.previous %}
-        <a href="{{ paginator.previous }}">&laquo; Previous</a> | 
+        <a href="{{ paginator.previous }}">&laquo; Previous</a> |
         {% endif %}
         <span>Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
-        {% if paginator.next %} | 
+        {% if paginator.next %} |
         <a href="{{ paginator.next }}">Next &raquo;</a>
         {% endif %}
       </p>
     </nav>
     {% endif %}
   {% else %}
-    {# Fallback: list from blog section #}
     {% set blog = get_section(path="blog/_index.md") %}
     {% if blog and blog.pages %}
       {% for page in blog.pages %}
@@ -51,3 +50,5 @@
   {% endif %}
 </main>
 {% endblock main %}
+
+

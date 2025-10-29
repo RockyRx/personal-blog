@@ -1,0 +1,27 @@
+{% extends "_base.html" %}
+
+{% block content %}
+  {{ super() }}
+{% endblock content %}
+
+{% block main %}
+<main>
+  <header><h1>{{ term.name }}</h1></header>
+  {% if term.pages %}
+  <div class="posts">
+    {% for page in term.pages %}
+      <article itemscope itemtype="http://schema.org/CreativeWork">
+        <header>
+          <h2 itemprop="name"><a href="{{ page.permalink }}">{{ page.title }}</a></h2>
+          {% if page.date %}<data class="muted">{{ page.date | date(format="%F") }}</data>{% endif %}
+        </header>
+      </article>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p>No pages found.</p>
+  {% endif %}
+</main>
+{% endblock main %}
+
+

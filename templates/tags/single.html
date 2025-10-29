@@ -1,23 +1,25 @@
-{% extends "index.html" %}
-
-{% block title %}Posts Tagged "{{ term.name }}"{% endblock title %}
-{% block og_title %}Posts Tagged "{{ term.name }}"{% endblock og_title %}
-{% block twitter_title %}Posts Tagged "{{ term.name }}"{% endblock twitter_title %}
-
-{% block meta_description %}
-<meta name="description" content="Discover articles tagged '{{ term.name }}' in this site index." />
-  <meta property="og:description" content="Discover articles tagged '{{ term.name }}' in this site index." />
-  <meta property="twitter:description" content="Discover articles tagged '{{ term.name }}' in this site index." />
-{% endblock meta_description %}
+{% extends "_base.html" %}
 
 {% block content %}
-    {% block header %}
-        {{ super() }}
-    {% endblock header %}
-
-    <h1>{{ term.name }}</h1>
-
-    {% for page in term.pages %}
-        {{ post_macros::page_in_list(page=page) }}
-    {% endfor %}
+  {{ super() }}
 {% endblock content %}
+
+{% block main %}
+<main>
+  <header><h1>Tag: {{ term.name }}</h1></header>
+  {% if term.pages %}
+  <div class="posts">
+    {% for page in term.pages %}
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+      <header>
+        <h2 itemprop="name"><a href="{{ page.permalink }}">{{ page.title }}</a></h2>
+        <data class="muted">{{ page.date | date(format="%F") }}</data>
+      </header>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p>No posts for this tag.</p>
+  {% endif %}
+</main>
+{% endblock main %}
