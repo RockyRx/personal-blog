@@ -6,26 +6,9 @@
  */
 
 document.addEventListener("DOMContentLoaded", function () {
-  const storedTheme = localStorage.getItem("theme-storage");
-  const defaultThemeOption = document.documentElement.dataset.theme || "toggle";
-
-  let currentTheme;
-
-  // Prioritize `config.extra.theme` over localStorage, if available
-  if (
-    defaultThemeOption === "dark" ||
-    defaultThemeOption === "light" ||
-    defaultThemeOption === "auto"
-  ) {
-    currentTheme = defaultThemeOption;
-  } else if (storedTheme) {
-    currentTheme = storedTheme;
-  } else {
-    currentTheme = "dark"; // Default to dark
-  }
-
-  // Apply the theme
-  setTheme(currentTheme);
+  // Update icons based on current theme (init-theme.js already set the theme class)
+  const currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+  updateThemeIcons(currentTheme);
 
   // Add event listener for the theme toggle button
   const toggleButton = document.getElementById("dark-mode-toggle");

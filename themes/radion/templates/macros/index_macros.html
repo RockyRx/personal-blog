@@ -40,8 +40,7 @@
       <section class="search-results" aria-live="polite">
         <article class="search-results__items" role="list"></article>
       </section>
-      {% endif %} {% if config.extra.theme | default(value="toggle") ==
-      "toggle" %}
+      {% endif %} {% if config.extra.theme_mode | default(value="toggle") == "toggle" %}
       <a id="dark-mode-toggle" href="#">
         <img
           src="{{ get_url(path='icons/sun.svg') }}"
