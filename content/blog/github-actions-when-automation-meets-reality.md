@@ -98,6 +98,39 @@ Is this less "modern"? Maybe. But it's transparent, predictable, and gives you c
 
 ---
 
+## Update: Automation Wins After All
+
+After writing the initial version of this post, I realized something: maintaining two branches manually was becoming a burden. The workflow was reliable, but it required:
+- Remembering to switch branches
+- Running build commands
+- Manually syncing files
+- Switching back to main
+
+**The Solution:**
+I revisited GitHub Actions, but this time with a clear understanding of the issues:
+1. Configured submodules properly (`submodules: false` since we don't use them)
+2. Used a reliable deployment action (`peaceiris/actions-gh-pages`)
+3. Set up the workflow to trigger on push to `main`
+
+**The Result:**
+Now I just push to `main`, and GitHub Actions handles everything:
+- Builds the site automatically
+- Deploys to `gh-pages` branch
+- Updates GitHub Pages
+
+**What Changed:**
+The key was understanding the submodule issue first. Once that was resolved, the automation became reliable. The workflow is simple and transparent—I can see exactly what's happening in the Actions tab.
+
+**The Lesson:**
+Sometimes automation *does* make sense. The difference between my first attempt and my second attempt was:
+- Understanding the root causes (submodules, branch setup)
+- Using proven, maintained actions
+- Starting simple and adding complexity only when needed
+
+The manual approach taught me what was happening under the hood. That knowledge made the automation reliable.
+
+---
+
 ## Issue #3: Missing Scripts and Assets
 
 When deploying to GitHub Pages, you need to ensure all your assets are included. This might seem obvious, but it's easy to miss.
@@ -178,11 +211,18 @@ Don't get me wrong—GitHub Actions is powerful and useful. Use it when:
 
 ## Conclusion
 
-GitHub Actions is a powerful tool, but it's not always the right tool. Sometimes, the manual approach gives you more control, better understanding, and faster iteration.
+GitHub Actions is a powerful tool, but it's not always the right tool—at least not immediately. My journey started with frustration, moved to manual control, and ended with successful automation.
 
-The key is to choose the approach that fits your project, your team, and your workflow. Automation for the sake of automation isn't always better—sometimes, a simple script you understand is more valuable than a complex workflow you don't.
+The manual approach wasn't wasted effort. It taught me:
+- What was happening under the hood
+- How the build process worked
+- What could go wrong and why
 
-At the end of the day, the goal is to deploy reliably and efficiently. Whether that's through GitHub Actions, manual commands, or a hybrid approach, what matters is that it works for you.
+That knowledge made the automation reliable. When I returned to GitHub Actions, I understood the root causes and could configure it correctly.
+
+The key is to choose the approach that fits your project, your team, and your workflow. Sometimes that means starting manually to understand the process, then automating once you know what you're automating.
+
+At the end of the day, the goal is to deploy reliably and efficiently. Whether that's through GitHub Actions, manual commands, or a hybrid approach, what matters is that it works for you—and that you understand why it works.
 
 ---
 

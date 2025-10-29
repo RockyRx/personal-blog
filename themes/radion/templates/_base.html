@@ -2,7 +2,7 @@
 {% import "macros/index_macros.html" as index_macros %}
 
 <!doctype html>
-<html lang="{{ config.default_language | default(value='en') }}">
+<html lang="{{ config.default_language | default(value='en') }}" data-theme="{{ config.extra.theme_mode | default(value='toggle') }}">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -175,8 +175,8 @@
       {% if config.extra.codeblock %}
         <script defer src="{{ get_url(path='js/codeblock.js', trailing_slash=false) | safe }}"></script>
       {% endif %}
-      {% if config.extra.theme %}
-        <script src="{{ get_url(path='js/toggle-theme.js', trailing_slash=false) | safe }}"></script>
+      {% if config.extra.theme_mode == "toggle" %}
+        <script defer src="{{ get_url(path='js/toggle-theme.js', trailing_slash=false) | safe }}"></script>
       {% endif %}
       {% include "partials/latex.html" %}
       {% include "partials/search.html" %}

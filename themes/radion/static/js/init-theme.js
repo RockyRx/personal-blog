@@ -8,7 +8,7 @@
 (function () {
   try {
     const storedTheme = localStorage.getItem("theme-storage");
-    const defaultTheme = "{{ config.extra.theme | default(value='toggle') }}";
+    const defaultTheme = document.documentElement.dataset.theme || "toggle";
     let theme;
 
     if (["light", "dark", "auto"].includes(defaultTheme)) {
