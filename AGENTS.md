@@ -1,15 +1,13 @@
 # Operational guide for agents working on this blog
 
 ## Goals
-- Keep the site always deployable on GitHub Pages under `gh-pages` branch.
+- Keep the site always deployable on GitHub Pages.
 - Never break homepage listings or taxonomy pages.
-- **CRITICAL**: ALWAYS use `gh-pages` branch for deployment. Never use GitHub Actions.
+- **CRITICAL**: Just push to `main` - GitHub Actions handles everything automatically!
 
 ## Repository Structure
 - **Single repository**: `/Users/oshadhagunawardena/Projects/personal/personal-blog`
-- **Two branches**:
-  - `main`: Source code (config.toml, content/, templates/, themes/, etc.)
-  - `gh-pages`: Built site (HTML, CSS, JS - what GitHub Pages serves)
+- **Single branch to work with**: `main` (GitHub Actions automatically deploys to `gh-pages`)
 
 ## Development Workflow
 1. **Always work on `main` branch**:
@@ -18,43 +16,17 @@
    - Make changes to content, templates, config, etc.
    - Test locally: `zola serve` (available at http://127.0.0.1:1111)
 
-2. **Commit changes to `main`**:
+2. **Commit and push to `main`**:
    - `git add .`
    - `git commit -m "Your commit message"`
    - `git push origin main`
+   - **That's it!** GitHub Actions will automatically build and deploy to GitHub Pages.
 
-## Build & Deploy (Manual - ALWAYS USE THIS)
-**Never use GitHub Actions. Always deploy manually to `gh-pages` branch.**
-
-1. **Build the site** (from `main` branch):
-   ```bash
-   cd /Users/oshadhagunawardena/Projects/personal/personal-blog
-   git checkout main
-   zola build --output-dir public --force
-   ```
-
-2. **Deploy to gh-pages**:
-   ```bash
-   git checkout -B gh-pages
-   rsync -av --delete --exclude='.git/' public/ .
-   git add -A
-   git commit -m "Publish: $(date +%Y-%m-%d)"
-   git push -f origin gh-pages
-   git checkout main
-   ```
-
-3. **One-liner for quick deploy**:
-   ```bash
-   cd /Users/oshadhagunawardena/Projects/personal/personal-blog && \
-   git checkout main && \
-   zola build --output-dir public --force && \
-   git checkout -B gh-pages && \
-   rsync -av --delete --exclude='.git/' public/ . && \
-   git add -A && \
-   git commit -m "Publish: $(date +%Y-%m-%d)" && \
-   git push -f origin gh-pages && \
-   git checkout main
-   ```
+## Automated Deployment
+- **GitHub Actions** automatically builds and deploys on every push to `main`
+- No manual deployment steps needed
+- The workflow builds the site and pushes to `gh-pages` branch automatically
+- Check the Actions tab in GitHub to see deployment status
 
 ## Content rules
 - All posts go under `content/blog/` as Markdown files with TOML front matter.
@@ -76,12 +48,10 @@
 - Section template: `themes/radion/templates/section.html` (overrides are allowed under `templates/` if needed).
 
 ## Do not do
-- **NEVER use GitHub Actions** - always deploy manually to `gh-pages` branch.
-- Do not edit files directly on `gh-pages` except during the publish step (syncing `public/`).
+- Do not edit files directly on `gh-pages` branch - it's automatically managed by GitHub Actions.
 - Do not delete `.git` in the repository.
-- Do not add standalone HTML pages under `public/` by hand.
+- Do not add standalone HTML pages under `public/` by hand (it's in `.gitignore` anyway).
 - Do not keep `themes/radion` as a git submodule; ensure it's regular files (no nested `.git`).
-- Do not create or enable `.github/workflows/` - we use manual deployment only.
 
 ## Quick checks after changes
 - Run `zola build` and confirm it prints `Creating N pages and M sections` without errors.
@@ -91,6 +61,7 @@
   - Random post renders and links work.
 
 ## Rollback
-- If deployment breaks, force-push the previous working commit in `gh-pages`:
-  - `git log --oneline`
-  - `git reset --hard <good_sha> && git push -f origin gh-pages`
+- If deployment breaks, you can:
+  - Revert the commit on `main`: `git revert <commit_sha>` and push
+  - Or fix the issue and push a new commit - GitHub Actions will redeploy automatically
+  - Check GitHub Actions logs if deployment fails: Go to Actions tab → Failed workflow → View logs
