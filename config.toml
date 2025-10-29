@@ -33,7 +33,7 @@ radion_menu = [
 comments = false
 
 # Light/Dark Mode set
-theme = "toggle" # options: {light, dark, auto, toggle}
+theme_mode = "toggle" # options: {light, dark, auto, toggle}
 
 # Whether to display favicon
 favicon = true
