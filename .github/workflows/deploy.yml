@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: false
+          fetch-depth: 0  # Fetch full history to ensure we have latest
       
       - name: Install Zola
         run: |
@@ -26,16 +27,54 @@ jobs:
           zola --version
       
       - name: Build site
-        run: zola build --output-dir public
+        run: |
+          echo "Building site..."
+          zola build --output-dir public
+          echo "Build complete"
       
       - name: Verify build
         run: |
+          echo "=== Verification ==="
           echo "Checking HTML for data-theme attribute:"
-          grep -o 'data-theme="toggle"' public/index.html || echo "WARNING: data-theme not found"
+          if grep -q 'data-theme="toggle"' public/index.html; then
+            echo "✓ data-theme attribute found"
+          else
+            echo "✗ WARNING: data-theme not found"
+            echo "HTML tag:"
+            grep -o '<html[^>]*>' public/index.html || echo "No HTML tag found"
+          fi
+          
+          echo ""
           echo "Checking if toggle-theme.js exists:"
-          test -f public/js/toggle-theme.js && echo "✓ toggle-theme.js found" || echo "✗ toggle-theme.js missing"
+          if [ -f public/js/toggle-theme.js ]; then
+            echo "✓ toggle-theme.js found"
+            echo "First few lines:"
+            head -5 public/js/toggle-theme.js
+          else
+            echo "✗ toggle-theme.js missing"
+            echo "Files in public/js/:"
+            ls -la public/js/ || echo "public/js/ directory doesn't exist"
+          fi
+          
+          echo ""
           echo "Verifying init-theme.js content:"
-          grep -q "dataset.theme" public/js/init-theme.js && echo "✓ init-theme.js uses dataset.theme" || echo "✗ init-theme.js has wrong content"
+          if grep -q "dataset.theme" public/js/init-theme.js; then
+            echo "✓ init-theme.js uses dataset.theme"
+            echo "Relevant line:"
+            grep "dataset.theme" public/js/init-theme.js | head -1
+          else
+            echo "✗ init-theme.js has wrong content"
+            echo "Content:"
+            head -15 public/js/init-theme.js
+          fi
+          
+          echo ""
+          echo "Checking if toggle-theme.js is loaded in HTML:"
+          if grep -q "toggle-theme.js" public/index.html; then
+            echo "✓ toggle-theme.js is loaded"
+          else
+            echo "✗ toggle-theme.js not found in HTML"
+          fi
       
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
