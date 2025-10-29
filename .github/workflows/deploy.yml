@@ -125,4 +125,13 @@ jobs:
           publish_dir: ./public
           force_orphan: true
           cname: noos.blog
+      
+      - name: Post-deployment verification
+        run: |
+          echo "=== Deployment Complete ==="
+          echo "Waiting 10 seconds for GitHub Pages to update..."
+          sleep 10
+          echo ""
+          echo "Note: It may take a few minutes for GitHub Pages to rebuild and serve the new content."
+          echo "Check the Actions tab and GitHub Pages settings to verify deployment status."
 
