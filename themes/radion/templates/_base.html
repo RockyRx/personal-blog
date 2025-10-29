@@ -165,7 +165,7 @@
     {% include "partials/fonts.html" %}
 
     <!-- Pass Theme Preference as Data Attribute -->
-    <script src="{{ get_url(path='js/init-theme.js', trailing_slash=false) | safe }}"></script>
+    <script src="{{ get_url(path='js/init-theme.js', trailing_slash=false) | safe }}?v={{ now() | date(format='%s') }}"></script>
 
     <!-- Reference return to click position script -->
     <script defer src="{{ get_url(path='js/reference-return.js', trailing_slash=false) | safe }}"></script>
@@ -176,7 +176,7 @@
         <script defer src="{{ get_url(path='js/codeblock.js', trailing_slash=false) | safe }}"></script>
       {% endif %}
       {% if config.extra.theme_mode == "toggle" %}
-        <script defer src="{{ get_url(path='js/toggle-theme.js', trailing_slash=false) | safe }}"></script>
+        <script defer src="{{ get_url(path='js/toggle-theme.js', trailing_slash=false) | safe }}?v={{ now() | date(format='%s') }}"></script>
       {% endif %}
       {% include "partials/latex.html" %}
       {% include "partials/search.html" %}

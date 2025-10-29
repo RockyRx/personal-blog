@@ -83,4 +83,12 @@ jobs:
           publish_dir: ./public
           force_orphan: true
           cname: noos.blog
+      
+      - name: Trigger GitHub Pages rebuild
+        run: |
+          echo "Triggering GitHub Pages rebuild to clear CDN cache..."
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/pages/builds || echo "Rebuild trigger attempted (may not be available for all repos)"
 
