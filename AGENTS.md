@@ -3,21 +3,58 @@
 ## Goals
 - Keep the site always deployable on GitHub Pages under `gh-pages` branch.
 - Never break homepage listings or taxonomy pages.
+- **CRITICAL**: ALWAYS use `gh-pages` branch for deployment. Never use GitHub Actions.
 
-## Source vs Deploy
-- Source lives in: `/Users/oshadhagunawardena/Projects/personal/personal-blog` on branch `main`.
-- Deployed site lives in: `/Users/oshadhagunawardena/Projects/personal/personal-blog` on branch `gh-pages`.
+## Repository Structure
+- **Single repository**: `/Users/oshadhagunawardena/Projects/personal/personal-blog`
+- **Two branches**:
+  - `main`: Source code (config.toml, content/, templates/, themes/, etc.)
+  - `gh-pages`: Built site (HTML, CSS, JS - what GitHub Pages serves)
 
-## Build & deploy (manual)
-1. Build:
+## Development Workflow
+1. **Always work on `main` branch**:
    - `cd /Users/oshadhagunawardena/Projects/personal/personal-blog`
-   - `zola build --output-dir public --force`
-2. Publish to gh-pages:
-   - Ensure repo is initialized and remote is set: `git init && git remote add origin git@github.com:RockyRx/personal-blog.git || true`
-   - `git checkout -B gh-pages`
-   - Sync artifacts: `rsync -av --delete --exclude='.git/' public/ .`
-   - `git add -A && git commit -m "Publish" && git push -f origin gh-pages`
-   - Switch back to editing branch: `git checkout main`
+   - `git checkout main`
+   - Make changes to content, templates, config, etc.
+   - Test locally: `zola serve` (available at http://127.0.0.1:1111)
+
+2. **Commit changes to `main`**:
+   - `git add .`
+   - `git commit -m "Your commit message"`
+   - `git push origin main`
+
+## Build & Deploy (Manual - ALWAYS USE THIS)
+**Never use GitHub Actions. Always deploy manually to `gh-pages` branch.**
+
+1. **Build the site** (from `main` branch):
+   ```bash
+   cd /Users/oshadhagunawardena/Projects/personal/personal-blog
+   git checkout main
+   zola build --output-dir public --force
+   ```
+
+2. **Deploy to gh-pages**:
+   ```bash
+   git checkout -B gh-pages
+   rsync -av --delete --exclude='.git/' public/ .
+   git add -A
+   git commit -m "Publish: $(date +%Y-%m-%d)"
+   git push -f origin gh-pages
+   git checkout main
+   ```
+
+3. **One-liner for quick deploy**:
+   ```bash
+   cd /Users/oshadhagunawardena/Projects/personal/personal-blog && \
+   git checkout main && \
+   zola build --output-dir public --force && \
+   git checkout -B gh-pages && \
+   rsync -av --delete --exclude='.git/' public/ . && \
+   git add -A && \
+   git commit -m "Publish: $(date +%Y-%m-%d)" && \
+   git push -f origin gh-pages && \
+   git checkout main
+   ```
 
 ## Content rules
 - All posts go under `content/blog/` as Markdown files with TOML front matter.
@@ -39,10 +76,12 @@
 - Section template: `themes/radion/templates/section.html` (overrides are allowed under `templates/` if needed).
 
 ## Do not do
+- **NEVER use GitHub Actions** - always deploy manually to `gh-pages` branch.
 - Do not edit files directly on `gh-pages` except during the publish step (syncing `public/`).
-- Do not delete `.git` in `personal-blog`.
+- Do not delete `.git` in the repository.
 - Do not add standalone HTML pages under `public/` by hand.
 - Do not keep `themes/radion` as a git submodule; ensure it's regular files (no nested `.git`).
+- Do not create or enable `.github/workflows/` - we use manual deployment only.
 
 ## Quick checks after changes
 - Run `zola build` and confirm it prints `Creating N pages and M sections` without errors.
