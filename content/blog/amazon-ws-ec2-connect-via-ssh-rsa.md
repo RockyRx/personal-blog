@@ -1,6 +1,7 @@
 +++
 title = "Amazon WS EC2 – connect via SSH RSA"
 date = 2013-09-15
+[taxonomies]
 categories = ["Cloud"]
 tags = ["aws", "ec2", "ssh", "cloud"]
 +++

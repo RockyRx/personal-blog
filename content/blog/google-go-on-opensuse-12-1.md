@@ -1,6 +1,7 @@
 +++
 title = "Google Go on OpenSUSE 12.1"
 date = 2012-01-29
+[taxonomies]
 categories = ["Programming"]
 tags = ["golang", "go", "opensuse", "linux"]
 +++

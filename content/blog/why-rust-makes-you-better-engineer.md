@@ -3,6 +3,7 @@ title = "Why Rust Makes You a Better Engineer"
 description = "Deep dive into ownership, errors, and compiler-driven discipline that makes Rust unique and teaches better programming practices."
 date = 2025-01-27
 draft = false
+[taxonomies]
 tags = ["rust", "programming", "systems-programming", "memory-safety", "concurrency"]
 categories = ["Programming"]
 +++

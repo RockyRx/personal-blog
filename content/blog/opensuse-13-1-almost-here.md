@@ -1,6 +1,7 @@
 +++
 title = "openSUSE 13.1 – almost here [updated]"
 date = 2013-10-07
+[taxonomies]
 categories = ["Linux"]
 tags = ["opensuse", "linux", "release"]
 +++

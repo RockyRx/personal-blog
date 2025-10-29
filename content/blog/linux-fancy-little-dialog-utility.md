@@ -1,6 +1,7 @@
 +++
 title = "Linux | Fancy little \"dialog\" utility"
 date = 2013-12-23
+[taxonomies]
 categories = ["Linux"]
 tags = ["linux", "dialog", "bash", "cli"]
 +++

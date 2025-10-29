@@ -1,6 +1,7 @@
 +++
 title = "How my terminal looks"
 date = 2015-11-22
+[taxonomies]
 categories = ["Tools"]
 tags = ["terminal", "zsh", "oh-my-zsh", "tmux", "productivity", "linux"]
 +++

@@ -1,6 +1,7 @@
 +++
 title = "Connecting Dots"
 date = 2013-09-15
+[taxonomies]
 categories = ["Personal"]
 tags = ["reflection", "games", "mobile", "productivity"]
 +++

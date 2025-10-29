@@ -1,6 +1,7 @@
 +++
 title = "JDK 9 and JShell"
 date = 2015-06-12
+[taxonomies]
 categories = ["Programming"]
 tags = ["java", "jdk9", "jshell"]
 +++

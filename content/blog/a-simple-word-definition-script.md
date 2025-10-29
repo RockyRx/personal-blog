@@ -1,6 +1,7 @@
 +++
 title = "A simple word definition script"
 date = 2015-08-25
+[taxonomies]
 categories = ["Programming"]
 tags = ["scripts", "bash", "cli", "productivity"]
 +++

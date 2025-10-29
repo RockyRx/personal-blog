@@ -1,6 +1,7 @@
 +++
 title = "JAXB + Maven – Xml to Java"
 date = 2013-09-02
+[taxonomies]
 categories = ["Programming"]
 tags = ["java", "maven", "jaxb", "xml"]
 +++
