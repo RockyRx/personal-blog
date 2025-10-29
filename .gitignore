@@ -1,0 +1,13 @@
+# Zola build output
+public/
+
+# macOS
+.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
