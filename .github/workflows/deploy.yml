@@ -28,11 +28,20 @@ jobs:
       - name: Build site
         run: zola build --output-dir public
       
+      - name: Verify build
+        run: |
+          echo "Checking HTML for data-theme attribute:"
+          grep -o 'data-theme="toggle"' public/index.html || echo "WARNING: data-theme not found"
+          echo "Checking if toggle-theme.js exists:"
+          test -f public/js/toggle-theme.js && echo "✓ toggle-theme.js found" || echo "✗ toggle-theme.js missing"
+          echo "Verifying init-theme.js content:"
+          grep -q "dataset.theme" public/js/init-theme.js && echo "✓ init-theme.js uses dataset.theme" || echo "✗ init-theme.js has wrong content"
+      
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-          force_orphan: false
+          force_orphan: true
           cname: noos.blog
 
