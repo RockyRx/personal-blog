@@ -119,27 +119,27 @@
     <link
       rel="icon"
       type="image/png"
-      href="{{ config.base_url }}/icons/favicon/favicon-96x96.png"
+      href="{{ config.base_url }}/icons/favicon/favicon-96x96.png?v={{ now() | date(format='%s') }}"
       sizes="96x96"
     />
     <link
       rel="icon"
       type="image/svg+xml"
-      href="{{ config.base_url }}/icons/favicon/favicon.svg"
+      href="{{ config.base_url }}/icons/favicon/favicon.svg?v={{ now() | date(format='%s') }}"
     />
     <link
       rel="shortcut icon"
-      href="{{ config.base_url }}/icons/favicon/favicon.ico"
+      href="{{ config.base_url }}/icons/favicon/favicon.ico?v={{ now() | date(format='%s') }}"
     />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="{{ config.base_url }}/icons/favicon/apple-touch-icon.png"
+      href="{{ config.base_url }}/icons/favicon/apple-touch-icon.png?v={{ now() | date(format='%s') }}"
     />
     <meta name="apple-mobile-web-app-title" content="{{ title }}" />
     <link
       rel="manifest"
-      href="{{ config.base_url }}/icons/favicon/site.webmanifest"
+      href="{{ config.base_url }}/icons/favicon/site.webmanifest?v={{ now() | date(format='%s') }}"
     />
     {% endif %}
 
@@ -250,8 +250,6 @@
 
     <main>
       {% block main %}
-      {{ index_macros::page_lister(radion_title=config.extra.radion_title, paginator=paginator) }}
-      {{ index_macros::nav(paginator=paginator) }}
       {% endblock main %}
     </main>
     {% endblock content %}

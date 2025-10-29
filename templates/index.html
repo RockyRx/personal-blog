@@ -1,14 +1,14 @@
 {% extends "_base.html" %}
 {% import "macros/post_macros.html" as post_macros %}
+{% import "macros/index_macros.html" as index_macros %}
 
 {% block content %}
   {{ super() }}
 {% endblock content %}
 
 {% block main %}
-<main>
-  {% if section and section.title %}
-  <header><h1>{{ section.title }}</h1></header>
+  {% if config.extra.radion_title %}
+  <header><h1>{{ config.extra.radion_title }}</h1></header>
   {% endif %}
 
   {% if section and section.content %}
@@ -23,19 +23,7 @@
         {{ post_macros::page_in_list(page=page) }}
       {% endif %}
     {% endfor %}
-    {% if paginator.previous or paginator.next %}
-    <nav aria-label="Pagination">
-      <p>
-        {% if paginator.previous %}
-        <a href="{{ paginator.previous }}">&laquo; Previous</a> |
-        {% endif %}
-        <span>Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
-        {% if paginator.next %} |
-        <a href="{{ paginator.next }}">Next &raquo;</a>
-        {% endif %}
-      </p>
-    </nav>
-    {% endif %}
+    {{ index_macros::nav(paginator=paginator) }}
   {% else %}
     {% set blog = get_section(path="blog/_index.md") %}
     {% if blog and blog.pages %}
@@ -48,7 +36,6 @@
       <p>No posts yet.</p>
     {% endif %}
   {% endif %}
-</main>
 {% endblock main %}
 
 

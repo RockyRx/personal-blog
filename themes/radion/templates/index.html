@@ -1,5 +1,37 @@
 {% extends "_base.html" %}
+{% import "macros/index_macros.html" as index_macros %}
+{% import "macros/post_macros.html" as post_macros %}
 
 {% block content %}
   {{ super() }}
 {% endblock content %}
+
+{% block main %}
+  {% if config.extra.radion_title %}
+  <header><h1>{{ config.extra.radion_title }}</h1></header>
+  {% endif %}
+  
+  {% if section and section.content and section.content != "" %}
+  <div class="section-content">
+    {{ section.content | safe }}
+  </div>
+  {% endif %}
+
+  {% if paginator %}
+    {% for page in paginator.pages %}
+      {% if not page.extra.hide_from_list %}
+        {{ post_macros::page_in_list(page=page) }}
+      {% endif %}
+    {% endfor %}
+    {{ index_macros::nav(paginator=paginator) }}
+  {% else %}
+    {% set blog = get_section(path="blog/_index.md") %}
+    {% if blog and blog.pages %}
+      {% for page in blog.pages %}
+        {% if not page.extra.hide_from_list %}
+          {{ post_macros::page_in_list(page=page) }}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+{% endblock main %}

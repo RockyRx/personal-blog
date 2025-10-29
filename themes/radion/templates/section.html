@@ -1,28 +1,56 @@
 {% extends "_base.html" %}
 {% import "macros/post_macros.html" as post_macros %}
+{% import "macros/index_macros.html" as index_macros %}
 
 {% block content %}
   {{ super() }}
 {% endblock content %}
 
 {% block main %}
-<main>
-  {% if section.title %}
-  <header><h1>{{ section.title }}</h1></header>
-  {% endif %}
-  
-  {% if section.content %}
-  <div class="section-content">
-    {{ section.content | safe }}
-  </div>
-  {% endif %}
+  {% if section.permalink == "/" %}
+    {# Homepage - use radion_title and handle pagination #}
+    {% if config.extra.radion_title %}
+    <header><h1>{{ config.extra.radion_title }}</h1></header>
+    {% endif %}
+    
+    {% if paginator %}
+      {% for page in paginator.pages %}
+        {% if not page.extra.hide_from_list %}
+          {{ post_macros::page_in_list(page=page) }}
+        {% endif %}
+      {% endfor %}
+      {{ index_macros::nav(paginator=paginator) }}
+    {% elif section.pages %}
+      {% for page in section.pages %}
+        {% if not page.extra.hide_from_list %}
+          {{ post_macros::page_in_list(page=page) }}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    {# Other sections #}
+    {% if section.title %}
+    <header><h1>{{ section.title }}</h1></header>
+    {% endif %}
+    
+    {% if section.content %}
+    <div class="section-content">
+      {{ section.content | safe }}
+    </div>
+    {% endif %}
 
-  {% if section.pages %}
-  <div class="posts">
-    {% for page in section.pages %}
-      {{ post_macros::page_in_list(page=page) }}
-    {% endfor %}
-  </div>
+    {% if section.pages %}
+    <div class="posts">
+      {% for page in section.pages %}
+        {% if not page.extra.hide_from_list %}
+          {{ post_macros::page_in_list(page=page) }}
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if paginator %}
+      {{ index_macros::nav(paginator=paginator) }}
+    {% endif %}
   {% endif %}
-</main>
 {% endblock main %}
