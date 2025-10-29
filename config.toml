@@ -1,0 +1,48 @@
+# The URL the site will be built for
+base_url = "https://rockyrx.github.io/personal-blog"
+
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = true
+
+# The site theme to use.
+theme = "radion"
+
+taxonomies = [
+    {name = "categories", feed = true},
+    {name = "tags", feed = true},
+]
+
+[markdown]
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = true
+
+[extra]
+author = "Oshadha G"
+radion_title = "Oshadha's Blog"
+radion_menu = [
+    {url = "$BASE_URL/", name = "Home"},
+    {url = "$BASE_URL/categories", name = "Categories"},
+    {url = "$BASE_URL/tags", name = "Tags"},
+]
+
+# Giscus comment support (disabled for now)
+comments = false
+
+# Light/Dark Mode set
+theme = "toggle" # options: {light, dark, auto, toggle}
+
+# Whether to display favicon
+favicon = true
+
+# Enable search bar
+enable_search = true
+
+# Nicer codeblocks with copy to clipboard
+codeblock = true
+
+# Enable MathJax support
+latex = true

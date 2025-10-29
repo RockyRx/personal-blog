@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+
+{% block content %}
+  {{ super() }}
+{% endblock content %}
+
+{% block main %}
+<main>
+  <header><h1>{{ page.title }}</h1></header>
+  {% set tx = get_taxonomy(kind=page.extra.taxonomy) %}
+  {% if tx and tx.items %}
+  <ul>
+    {% for term in tx.items %}
+      <li>
+        <a href="{{ term.permalink }}">{{ term.name }}</a>
+        ({{ term.pages | length }})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>No {{ page.extra.taxonomy }} yet.</p>
+  {% endif %}
+</main>
+{% endblock main %}

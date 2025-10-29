@@ -1,0 +1,53 @@
+{% extends "_base.html" %}
+{% import "macros/post_macros.html" as post_macros %}
+
+{% block content %}
+  {{ super() }}
+{% endblock content %}
+
+{% block main %}
+<main>
+  {% if section and section.title %}
+  <header><h1>{{ section.title }}</h1></header>
+  {% endif %}
+  
+  {% if section and section.content %}
+  <div class="section-content">
+    {{ section.content | safe }}
+  </div>
+  {% endif %}
+
+  {% if paginator %}
+    {% for page in paginator.pages %}
+      {% if not page.extra.hide_from_list %}
+        {{ post_macros::page_in_list(page=page) }}
+      {% endif %}
+    {% endfor %}
+    {% if paginator.previous or paginator.next %}
+    <nav aria-label="Pagination">
+      <p>
+        {% if paginator.previous %}
+        <a href="{{ paginator.previous }}">&laquo; Previous</a> | 
+        {% endif %}
+        <span>Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
+        {% if paginator.next %} | 
+        <a href="{{ paginator.next }}">Next &raquo;</a>
+        {% endif %}
+      </p>
+    </nav>
+    {% endif %}
+  {% else %}
+    {# Fallback: list from blog section #}
+    {% set blog = get_section(path="blog/_index.md") %}
+    {% if blog and blog.pages %}
+      {% for page in blog.pages %}
+        {% if not page.extra.hide_from_list %}
+          {{ post_macros::page_in_list(page=page) }}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <p>No posts yet.</p>
+    {% endif %}
+  {% endif %}
+</main>
+{% endblock main %}
