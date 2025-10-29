@@ -31,6 +31,15 @@ jobs:
           echo "Building site..."
           zola build --output-dir public
           echo "Build complete"
+          echo ""
+          echo "Verifying critical files:"
+          ls -la public/blog/ 2>/dev/null | head -10 || echo "blog directory not found"
+          if [ -f "public/blog/github-actions-when-automation-meets-reality/index.html" ]; then
+            echo "✓ GitHub Actions blog post exists"
+          else
+            echo "✗ GitHub Actions blog post NOT found!"
+            exit 1
+          fi
       
       - name: Verify build
         run: |
@@ -75,6 +84,39 @@ jobs:
           else
             echo "✗ toggle-theme.js not found in HTML"
           fi
+          
+          echo ""
+          echo "=== Blog Post Verification ==="
+          BLOG_POST="public/blog/github-actions-when-automation-meets-reality/index.html"
+          if [ -f "$BLOG_POST" ]; then
+            echo "✓ Blog post file exists"
+            if grep -q "Template Conflicts and Browser Caching" "$BLOG_POST"; then
+              echo "✓ 'Template Conflicts and Browser Caching' found in blog post"
+            else
+              echo "✗ WARNING: 'Template Conflicts and Browser Caching' NOT found in blog post"
+              echo "Checking for Issue #5:"
+              grep -i "issue.*5\|template\|browser.*cache" "$BLOG_POST" | head -3 || echo "No matches found"
+            fi
+            if grep -q "Issue #5" "$BLOG_POST"; then
+              echo "✓ 'Issue #5' found in blog post"
+            else
+              echo "✗ WARNING: 'Issue #5' NOT found in blog post"
+            fi
+            echo ""
+            echo "Blog post line count:"
+            wc -l "$BLOG_POST"
+          else
+            echo "✗ Blog post file NOT found at $BLOG_POST"
+            echo "Available blog posts:"
+            ls -la public/blog/ 2>/dev/null || echo "public/blog/ directory doesn't exist"
+          fi
+          
+          echo ""
+          echo "=== Build Summary ==="
+          echo "Total pages built:"
+          find public -name "index.html" -type f | wc -l
+          echo "Total blog posts:"
+          find public/blog -name "index.html" -type f 2>/dev/null | wc -l
       
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
